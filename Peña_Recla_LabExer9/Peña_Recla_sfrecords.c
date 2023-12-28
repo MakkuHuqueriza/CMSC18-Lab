@@ -189,8 +189,6 @@ void textfilecontent(s_record *list){
 	fprintf(firstfile,"No.\t | Surname\t | Sex\t | Student Number | Department \n");
     fprintf(firstfile,"-------------------------------------------------------------\n");
 
-    fclose(firstfile);
-
     FILE *secondfile = fopen("database.txt", "r");
     if(secondfile == NULL){
         printf("Error in opening file\n");
@@ -201,8 +199,6 @@ void textfilecontent(s_record *list){
     while (fscanf(secondfile, "%[^,] ,%c,%d,%d,%s\n", list[i].surname, &list[i].sex, &list[i].year, &list[i].Snum, list[i].Department) != EOF){
         i++;
 	}
-
-    fclose(secondfile);
 
     FILE *thirdfile = fopen("display.txt", "a");
     if(thirdfile == NULL){
@@ -216,5 +212,7 @@ void textfilecontent(s_record *list){
     }
     fprintf(thirdfile,"-------------------------------------------------------------\n");
 
+    fclose(firstfile);
+    fclose(secondfile);
     fclose(thirdfile);
 }
