@@ -126,12 +126,12 @@ void ask_student_Info(int n, s_record student[]){
         exit(1);
     }
 
-    char buffer[5];
+    char buffer[10];
 
-    fscanf(bufferfile, "%s", buffer);
+    fscanf(bufferfile, "%[^,]", buffer);
 
-    if((strcmp(buffer, "No.")) != 0){
-        fprintf(firstfile, "No.,Surname,Sex,Student Number,Department\n");
+    if((strcmp(buffer, "Surname")) != 0){
+        fprintf(firstfile, "Surname,Sex,Student Number,Department\n");
     }
 
     fclose(bufferfile);
