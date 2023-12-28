@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct s_record {
     char surname[30];
@@ -16,15 +17,12 @@ s_record *create_database(int num);
 void ask_student_Info(int n, s_record student[]);
 void display_s_Info(s_record *);
 int innerchoiceforUser();
-void textfilecontent(s_record *);
 
 int main(){
 
     int num, choice;
     s_record *student_list;
     s_record stdlist[1000];
-    
-    textfilecontent(stdlist);
 
     display();
     while(1){
@@ -39,7 +37,7 @@ int main(){
             case 1: 
                 num = num_of_student();
                 student_list = create_database(num);
-                ask_student_Info(num, student_list);
+                ask_student_Info(num, student_list);  
                 innerchoiceforUser();
                 break;
 
@@ -110,11 +108,33 @@ s_record *create_database(int num)
 
 void ask_student_Info(int n, s_record student[]){
 
-    FILE *file = fopen("database.txt", "a");
-    if(file == NULL){
+    FILE *firstfile = fopen("display.csv", "a");
+    if(firstfile == NULL){
         printf("Error in opening file\n");
         exit(1);
     }
+
+    FILE *secondfile = fopen("database.csv", "a");
+    if(secondfile == NULL){
+        printf("Error in opening file\n");
+        exit(1);
+    }
+
+    FILE *bufferfile = fopen("display.csv", "r");
+    if(bufferfile == NULL){
+        printf("Error in opening file\n");
+        exit(1);
+    }
+
+    char buffer[5];
+
+    fscanf(bufferfile, "%s", buffer);
+
+    if((strcmp(buffer, "No.")) != 0){
+        fprintf(firstfile, "No.,Surname,Sex,Student Number,Department\n");
+    }
+
+    fclose(bufferfile);
 
     int count = 0;
 	while (count < n){
@@ -122,27 +142,33 @@ void ask_student_Info(int n, s_record student[]){
 		
 		printf("\nSurname: ");
 		scanf(" %[^\n]", student[count].surname);
-        fprintf(file, "%s,", student[count].surname);
+        fprintf(firstfile, "%s,", student[count].surname);
+        fprintf(secondfile, "%s,", student[count].surname);
 	
 		printf("Sex (M for male, F for female): ");
 		scanf(" %c", &student[count].sex);
-        fprintf(file, "%c,", student[count].sex);
+        fprintf(firstfile, "%c,", student[count].sex);
+        fprintf(secondfile, "%c,", student[count].sex);
 		
 		printf("Year (year part of student number): ");
 		scanf("%d", &student[count].year);
-        fprintf(file, "%d,", student[count].year);
+        fprintf(firstfile, "%d-", student[count].year);
+        fprintf(secondfile, "%d,", student[count].year);
 		
 		printf("Snum (last five digits of the student number): ");
 		scanf("%d", &student[count].Snum);
-        fprintf(file, "%d,", student[count].Snum);
+        fprintf(firstfile, "%d,", student[count].Snum);
+        fprintf(secondfile, "%d,", student[count].Snum);
 
         printf("Department: ");
 		scanf(" %[^\n]", student[count].Department);
-        fprintf(file, "%s\n", student[count].Department);
+        fprintf(firstfile, "%s\n", student[count].Department);
+        fprintf(secondfile, "%s\n", student[count].Department);
 
 		count++;
     }
-    fclose(file);
+    fclose(firstfile);
+    fclose(secondfile);
 
     printf("\nNew record/s is/are added...\n");
 
@@ -150,11 +176,20 @@ void ask_student_Info(int n, s_record student[]){
 
 void display_s_Info(s_record *list){
 
-    FILE *file = fopen("database.txt", "r");
+    system("cls");
+
+    FILE *file = fopen("database.csv", "r");
     if(file == NULL){
         printf("Error in opening file\n");
         exit(1);
     }
+
+    printf("=============================================================\n");
+    printf("Displaying Student Records...\n");
+    printf("=============================================================\n");
+    printf("-------------------------------------------------------------\n");
+    printf("No.\t | Surname\t | Sex\t | Student Number | Department \n");
+    printf("-------------------------------------------------------------\n");
 
     int i = 0;
     while (fscanf(file, "%[^,] ,%c,%d,%d,%s\n", list[i].surname, &list[i].sex, &list[i].year, &list[i].Snum, list[i].Department) != EOF){
@@ -163,56 +198,7 @@ void display_s_Info(s_record *list){
 
     fclose(file);
 
-    printf("-------------------------------------------------------------\n");
-	printf("=============================================================\n");
-	printf("Displaying Student Records...\n");
-	printf("=============================================================\n");
-	puts("");
-	printf("No.\t | Surname\t | Sex\t | Student Number | Department \n");
-
     for(int j = 0; j < i; j++){
         printf("%-2d\t | %-13s | %-3c\t | %-d-%-5d \t  | %-15s\n", j+1, list[j].surname, list[j].sex, list[j].year, list[j].Snum, list[j].Department);
     }
-}
-
-void textfilecontent(s_record *list){
-    FILE *firstfile = fopen("display.txt", "w");
-    if(firstfile == NULL){
-        printf("Error in opening file\n");
-        exit(1);
-    }
-
-    fprintf(firstfile,"=============================================================\n");
-	fprintf(firstfile,"Displaying Student Records...\n");
-	fprintf(firstfile,"=============================================================\n");
-    fprintf(firstfile,"-------------------------------------------------------------\n");
-	fprintf(firstfile,"No.\t | Surname\t | Sex\t | Student Number | Department \n");
-    fprintf(firstfile,"-------------------------------------------------------------\n");
-
-    FILE *secondfile = fopen("database.txt", "r");
-    if(secondfile == NULL){
-        printf("Error in opening file\n");
-        exit(1);
-    }
-
-    int i = 0;
-    while (fscanf(secondfile, "%[^,] ,%c,%d,%d,%s\n", list[i].surname, &list[i].sex, &list[i].year, &list[i].Snum, list[i].Department) != EOF){
-        i++;
-	}
-
-    FILE *thirdfile = fopen("display.txt", "a");
-    if(thirdfile == NULL){
-        printf("Error in opening file\n");
-        exit(1);
-    }
-
-    int j;
-    for(j = 0; j < i; j++){
-        fprintf(thirdfile, "%-2d\t | %-9s | %-3c\t | %-d-%-5d \t  | %-15s\n", j+1, list[j].surname, list[j].sex, list[j].year, list[j].Snum, list[j].Department);
-    }
-    fprintf(thirdfile,"-------------------------------------------------------------\n");
-
-    fclose(firstfile);
-    fclose(secondfile);
-    fclose(thirdfile);
 }
