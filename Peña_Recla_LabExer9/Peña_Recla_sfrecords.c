@@ -15,6 +15,7 @@ int choiceforUser();
 int num_of_student();
 s_record *create_database(int num);
 void ask_student_Info(int n, s_record student[]);
+s_record *allocarray();
 void display_s_Info(s_record *);
 int innerchoiceforUser();
 
@@ -22,7 +23,6 @@ int main(){
 
     int num, choice;
     s_record *student_list;
-    s_record stdlist[1000];
 
     display();
     while(1){
@@ -37,12 +37,15 @@ int main(){
             case 1: 
                 num = num_of_student();
                 student_list = create_database(num);
-                ask_student_Info(num, student_list);  
+                ask_student_Info(num, student_list);
+                free(student_list);  
                 innerchoiceforUser();
                 break;
 
             case 2:
-                display_s_Info(stdlist);
+                student_list = allocarray();
+                display_s_Info(student_list);
+                free(student_list); 
                 innerchoiceforUser();
                 break;
 
@@ -174,6 +177,31 @@ void ask_student_Info(int n, s_record student[]){
 
 }
 
+s_record *allocarray(){
+
+    FILE *file = fopen("database.csv", "r");
+    if(file == NULL){
+        printf("Error in opening file\n");
+        exit(1);
+    }   
+
+    int count = 0;
+    char line[256];
+    while (fgets(line, sizeof(line), file) != NULL){
+        count++;
+	}
+    
+    fclose(file);   
+
+	s_record *student_list = (s_record *)malloc(sizeof(s_record) * count);
+    if (student_list == NULL) {
+        printf("Error in memory allocation\n");
+        exit(1);
+    }
+	return student_list;
+}
+
+
 void display_s_Info(s_record *list){
 
     system("cls");
@@ -184,12 +212,12 @@ void display_s_Info(s_record *list){
         exit(1);
     }
 
-    printf("=============================================================\n");
+    printf("===============================================================\n");
     printf("Displaying Student Records...\n");
-    printf("=============================================================\n");
-    printf("-------------------------------------------------------------\n");
-    printf("No.\t | Surname\t | Sex\t | Student Number | Department \n");
-    printf("-------------------------------------------------------------\n");
+    printf("===============================================================\n");
+    printf("---------------------------------------------------------------\n");
+    printf("No.\t | Surname\t | Sex\t | Student Number | Department\n");
+    printf("---------------------------------------------------------------\n");
 
     int i = 0;
     while (fscanf(file, "%[^,] ,%c,%d,%d,%s\n", list[i].surname, &list[i].sex, &list[i].year, &list[i].Snum, list[i].Department) != EOF){
