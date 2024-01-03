@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Structure to record student records
 typedef struct s_record {
     char surname[30];
     char sex;
@@ -10,45 +11,82 @@ typedef struct s_record {
     char Department[30];
 }s_record;
 
+// Function that displays introductory message about the program
 void display();
+
+// Function that gets user-input for choice of action
 int choiceforUser();
-int num_of_student();
-s_record *create_database(int num);
-void ask_student_Info(int n, s_record student[]);
-s_record *allocarray();
-void display_s_Info(s_record *);
+
+// Function that gets user-input after the choice of action
 int innerchoiceforUser();
+
+// Function that gets user-input for number of students to include in the record
+int num_of_student();
+
+// Function to create a dynamic array for student records
+s_record *create_database(int num);
+
+// Function that collects user-input information for each student
+void ask_student_Info(int n, s_record student[]);
+
+// Function to allocate memory for an array from the database file
+s_record *allocarray();
+
+// Function that displays student records
+void display_s_Info(s_record *);
 
 int main(){
 
     int num, choice;
     s_record *student_list;
 
-    display();
+    display(); // Calls display function and displays introductory message
     while(1){
-        choice = choiceforUser();
+        choice = choiceforUser(); // Calls choiceforUser function and gets user's choice
         switch(choice){
-
+            
+            // Exiting program if user-input is 0
             case 0:
                 printf("\nExiting program...");
                 return 0;
                 break;
             
+            // Adding a new student record if user-input is 1
             case 1: 
+
+                // Calling num_of_student function to get the number of students    
                 num = num_of_student();
+
+                // Calling create_database function to create a dynamic array for student records
                 student_list = create_database(num);
-                ask_student_Info(num, student_list);
-                free(student_list);  
-                innerchoiceforUser();
-                break;
 
-            case 2:
-                student_list = allocarray();
-                display_s_Info(student_list);
+                // Calling ask_student_Info function to collect information for each student 
+                ask_student_Info(num, student_list); 
+
+                // Free allocated memory from array
                 free(student_list); 
+                
+                // Calling innerchoiceforUser function to ask user if they want to perform more actions
+                innerchoiceforUser(); 
+                break;
+
+            // Displaying current student records if user-input is 2
+            case 2:
+
+                // Calling allocarray function to allocate for an array from the database file
+                student_list = allocarray();
+
+                // Calling display_s_Info function to display student records
+                display_s_Info(student_list);
+
+                // Free allocated memory from array
+                free(student_list); 
+
+                // Calling innerchoiceforUser function to ask user if they want to perform more actions
                 innerchoiceforUser();
                 break;
 
+            // Printing Message if user-input is an invalid output
             default:
                 printf("\n\tInvalid Input!\n");
                 break;
@@ -56,6 +94,7 @@ int main(){
     }
 }
 
+// Function that displays introductory message about the program
 void display(){
 	printf("\n=================================================================================================================\n");
 	printf("THIS PROGRAM IS A SIMPLE STUDENT RECORDS THAT STORES THE DATA INPUTTED BY THE USER TO A TEXT FILE AS A DATABASE.\n");
@@ -63,6 +102,7 @@ void display(){
 	printf("=================================================================================================================\n");
 }
 
+// Function that gets user-input for choice of action
 int choiceforUser(){
     int choice;
     
@@ -75,6 +115,8 @@ int choiceforUser(){
 
     return choice;
 }
+
+// Function that gets user-input after the choice of action
 int innerchoiceforUser(){
     char innerchoice;
     printf("\n-----------------------------------------------------------------------------------------------------------------\n");
@@ -94,6 +136,7 @@ int innerchoiceforUser(){
     }
 }
 
+// Function that gets user-input for number of students to include in the record
 int num_of_student(){
     system("cls");
     int num;
@@ -103,12 +146,14 @@ int num_of_student(){
 	return num;
 }
 
+// Function to create a dynamic array for student records
 s_record *create_database(int num)
 {
 	s_record *student_list = (s_record *)malloc(sizeof(s_record) * num);
 	return student_list;
 }
 
+// Function that collects user-input information for each student
 void ask_student_Info(int n, s_record student[]){
 
     FILE *firstfile = fopen("display.csv", "a");
@@ -177,6 +222,7 @@ void ask_student_Info(int n, s_record student[]){
 
 }
 
+// Function to allocate memory for an array from the database file
 s_record *allocarray(){
 
     FILE *file = fopen("database.csv", "r");
@@ -201,7 +247,7 @@ s_record *allocarray(){
 	return student_list;
 }
 
-
+// Function that displays student records
 void display_s_Info(s_record *list){
 
     system("cls");
